@@ -1,7 +1,7 @@
 $(document).ready(() => {
   const checkedAmenities = {};
 
-  $('li input').on('change', function () {
+  $('input:checkbox').on('change', function () {
     const checkbox = $(this);
     const id = checkbox.attr('data-id');
     const name = checkbox.attr('data-name');
