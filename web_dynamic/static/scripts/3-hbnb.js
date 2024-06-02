@@ -18,7 +18,7 @@ $(document).ready(() => {
     console.log(checkedAmenities);
   });
 
-  $.get('http://127.0.0.1:5001/api/v1/status/', (resp, textStatus) => {
+  $.get('http://0.0.0.0:5001/api/v1/status/', (resp, textStatus) => {
     if (textStatus === 'success') {
       if (resp.status === 'OK') {
         $('div#api_status').addClass('available');
@@ -32,7 +32,7 @@ $(document).ready(() => {
 });
 
 $(document).ready(function () {
-  const url = 'http://127.0.0.1:5001/api/v1/places_search';
+  const url = 'http://0.0.0.0:5001/api/v1/places_search';
   $.ajax({
     url,
     type: 'POST',
@@ -42,7 +42,7 @@ $(document).ready(function () {
     data: JSON.stringify({}),
     success: function (data) {
       for (const place of data) {
-        $.get('http://127.0.0.1:5001/api/v1/users/' + place.user_id, function (user) {
+        $.get('http://0.0.0.0:5001/api/v1/users/' + place.user_id, function (user) {
           const html_place =
             '<article>' +
             '<div class="title_box">' +
