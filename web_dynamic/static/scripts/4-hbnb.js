@@ -70,7 +70,9 @@ filter = function (amenities = []) {
 $(document).ready(() => {
   filter();
   $('button').on('click', function () {
+    
     console.log('button clicked');
+    $('section.places').empty();
     filter(Object.values(checkedAmenities));
     console.log('new resut');
   });
