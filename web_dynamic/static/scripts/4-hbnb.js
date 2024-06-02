@@ -1,6 +1,5 @@
+const checkedAmenities = {};
 $(document).ready(() => {
-  const checkedAmenities = {};
-
   $('input:checkbox').on('change', function () {
     const checkbox = $(this);
     const id = checkbox.attr('data-id');
@@ -18,7 +17,7 @@ $(document).ready(() => {
     console.log(checkedAmenities);
   });
 
-  $.get('http://0.0.0.0:5001/api/v1/status/', (resp, textStatus) => {
+  $.get('http://127.0.0.1:5001/api/v1/status/', (resp, textStatus) => {
     if (textStatus === 'success') {
       if (resp.status === 'OK') {
         $('div#api_status').addClass('available');
@@ -31,44 +30,48 @@ $(document).ready(() => {
   });
 });
 
-
-
-$(document).ready(function() {
+filter = function (amenities = []) {
   const url = 'http://127.0.0.1:5001/api/v1/places_search';
   $.ajax({
-    url: url,
+    url,
     type: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    data: JSON.stringify({}),
-    success: function(data) {
+    data: amenities.length > 0 ? JSON.stringify({ amenities }) : JSON.stringify({}),
+    success: function (data) {
       for (const place of data) {
-        const html_place =
-          '<article>' +
-          '<div class="title_box">' +
-          '<h2>' + place.name + '</h2>' +
-          '<div class="price_by_night">' + place.price_by_night + '</div>' +
-          '</div>' +
-          '<div class="information">' +
-          '<div class="max_guest">' + place.max_guest + ' Guest' + (place.max_guest > 1 ? 's' : '')+'</div>' +
-          '<div class="number_rooms">' + place.number_rooms + ' Bedroom' + (place.number_rooms > 1 ? 's' : '') + '</div>' +
-          '<div class="number_bathrooms">' + place.number_bathrooms + ' Bathroom' +(place.number_bathrooms > 1 ? 's' : '') + '</div>' +
-	  '</div>' +
+        $.get('http://127.0.0.1:5001/api/v1/users/' + place.user_id, function (user) {
+          const html_place =
+            '<article>' +
+            '<div class="title_box">' +
+            '<h2>' + place.name + '</h2>' +
+            '<div class="price_by_night">' + place.price_by_night + '</div>' +
+            '</div>' +
+            '<div class="information">' +
+            '<div class="max_guest">' + place.max_guest + ' Guest' + (place.max_guest > 1 ? 's' : '') + '</div>' +
+            '<div class="number_rooms">' + place.number_rooms + ' Bedroom' + (place.number_rooms > 1 ? 's' : '') + '</div>' +
+            '<div class="number_bathrooms">' + place.number_bathrooms + ' Bathroom' + (place.number_bathrooms > 1 ? 's' : '') + '</div>' +
+            '</div>' +
 
-	  "<div class='owner'>" +
-	         "<b>Owner: </b>" +
-	  "</div>" +
+            "<div class='user'>" +
+            '<b>Owner: ' + user.first_name + ' ' + user.last_name + '</b>' +
+            '</div>' +
 
-          '<div class="description">' + place.description + '</div>' +
-          '</article>';
+            '<div class="description">' + place.description + '</div>' +
+            '</article>';
 
-    $('.places').append(html_place);
-
-    $.get('http://127.0.0.1:5001/api/v1/users/' + place.user_id, function (user) {
-      $('.owner').last().append(user.first_name + " " + user.last_name);
+          $('section.places').append(html_place);
 		    });
-   }
-  }
- });
+      }
+    }
+  });
+};
+$(document).ready(() => {
+  filter();
+  $('button').on('click', function () {
+    console.log('button clicked');
+    filter(Object.values(checkedAmenities));
+    console.log('new resut');
+  });
 });
